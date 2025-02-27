@@ -17,6 +17,7 @@ app.use(
       'http://localhost:3000', // Local backend
       'http://localhost:3001', // Local frontend (port 3001)
       'http://localhost:3002', // Additional local frontend (port 3002)
+      'http://localhost:3003'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
@@ -55,6 +56,7 @@ const authRoutes=require('./routes/authRoutes');
 const deploymentRoutes = require('./routes/deploymentRoutes'); // Deployment routes
 const taskRoutes = require('./routes/taskRoutes'); // Task routes
 const deploymentCircleRoutes = require('./routes/deploymentCircleRouter');
+const supportRoutes=require('./routes/supportRoutes')
 
 // Initialize database and start server
 const initializeServer = async () => {
@@ -80,6 +82,7 @@ const initializeServer = async () => {
     app.use('/api/deployments', deploymentRoutes); // Deployment routes
     app.use('/api/tasks', taskRoutes); // Task routes
     app.use('/api/deploymentCircles', deploymentCircleRoutes);
+    app.use('/api/support',supportRoutes);
 
     // Health check route
     app.get('/', (req, res) => {
