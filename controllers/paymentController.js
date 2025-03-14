@@ -10,10 +10,10 @@ const PHONEPE_PAY_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/p
 const PHONEPE_STATUS_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox";
 
 // ✅ Update this with your latest Vercel frontend URL
-const FRONTEND_URL = "https://cloudfrontend-nhf8.vercel.app/";
-const REDIRECT_URL = `https://cloudfrontend-nhf8.vercel.app//api/payment/callback`;
-const SUCCESS_URL = `https://cloudfrontend-nhf8.vercel.app//payment-success`;
-const FAILURE_URL = `https://cloudfrontend-nhf8.vercel.app//payment-failure`;
+const FRONTEND_URL = "https://cloudfrontend-nhf8.vercel.app";
+const REDIRECT_URL = `https://cloudfrontend-nhf8.vercel.app/api/payment/callback`;
+const SUCCESS_URL = `https://cloudfrontend-nhf8.vercel.app/payment-success`;
+const FAILURE_URL = `https://cloudfrontend-nhf8.vercel.app/payment-failure`;
 
 exports.initiatePayment = async (req, res) => {
   try {
