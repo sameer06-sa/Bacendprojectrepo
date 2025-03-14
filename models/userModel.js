@@ -52,6 +52,12 @@ const UserSchema = new mongoose.Schema(
         'Others',
       ],
     },
+    // 🔹 Added missing paymentTransactionId field
+    paymentTransactionId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows multiple users to have null values
+    },
     subscription: {
       type: {
         type: String,

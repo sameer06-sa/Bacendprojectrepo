@@ -58,6 +58,7 @@ const taskRoutes = require('./routes/taskRoutes'); // Task routes
 const deploymentCircleRoutes = require('./routes/deploymentCircleRouter');
 const supportRoutes=require('./routes/supportRoutes')
 
+
 // Initialize database and start server
 const initializeServer = async () => {
   try {
@@ -83,6 +84,7 @@ const initializeServer = async () => {
     app.use('/api/tasks', taskRoutes); // Task routes
     app.use('/api/deploymentCircles', deploymentCircleRoutes);
     app.use('/api/support',supportRoutes);
+    app.use('/api/payment', paymentRoutes);
 
     // Health check route
     app.get('/', (req, res) => {
