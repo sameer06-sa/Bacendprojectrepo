@@ -12,7 +12,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      'https://cloudfrontend.vercel.app',
+      'https://cloudfrontend-nhf8.vercel.app',
       'https://adminportal-wine.vercel.app',
       'http://localhost:3000', // Local backend
       'http://localhost:3001', // Local frontend (port 3001)
