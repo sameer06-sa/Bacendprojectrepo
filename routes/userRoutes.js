@@ -54,6 +54,7 @@ router.post('/signin', signinValidator, validateRequest, async (req, res, next) 
   }
 });
 
+
 // Get user details by email
 router.get('/:email', authenticateUser, async (req, res, next) => {
   try {

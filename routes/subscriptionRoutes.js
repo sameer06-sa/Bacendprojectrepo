@@ -4,6 +4,8 @@ const { createSubscription } = require('../controllers/subscriptionController');
 const authenticateUser = require('../middlewares/authenticateUser'); // Ensure the user is authenticated
 const User = require('../models/userModel'); // Ensure User model is imported
 
+
+
 // Route to create a new subscription
 router.post('/create', authenticateUser, createSubscription);
 

@@ -3,17 +3,12 @@ const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const User = require('../models/userModel');
 
-// ✅ Hardcoded PhonePe Sandbox Credentials
-const MERCHANT_ID = "PGTESTPAYUAT86";
-const MERCHANT_KEY = "96434309-7796-489d-8924-ab56988a6076";
-const PHONEPE_PAY_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
-const PHONEPE_STATUS_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox";
-
-// ✅ Update this with your latest Vercel frontend URL
-const FRONTEND_URL = "https://cloudfrontend-nhf8.vercel.app";
-const REDIRECT_URL = `https://cloudfrontend-nhf8.vercel.app/api/payment/callback`;
-const SUCCESS_URL = `https://cloudfrontend-nhf8.vercel.app/payment-success`;
-const FAILURE_URL = `https://cloudfrontend-nhf8.vercel.app/payment-failure`;
+// PhonePe Sandbox Credentials (from .env)
+const MERCHANT_ID = process.env.PHONEPE_MERCHANT_ID;
+const MERCHANT_KEY = process.env.PHONEPE_MERCHANT_KEY;
+const PHONEPE_PAY_URL = process.env.PHONEPE_BASE_URL;
+const PHONEPE_STATUS_URL = process.env.PHONEPE_STATUS_URL;
+const REDIRECT_URL = process.env.REDIRECT_URL; // Ensure this is correct
 
 exports.initiatePayment = async (req, res) => {
   try {
@@ -22,6 +17,7 @@ exports.initiatePayment = async (req, res) => {
     // Set default amount to ₹5 if not provided
     const paymentAmount = amount || 5;
 
+    // Validate email and amount
     if (!email || paymentAmount < 0.01) {
       return res.status(400).json({ error: 'Invalid email or amount' });
     }
@@ -46,9 +42,9 @@ exports.initiatePayment = async (req, res) => {
     const payload = {
       merchantId: MERCHANT_ID,
       merchantTransactionId: transactionId,
-      amount: paymentAmount * 100, // Convert to paise
+      amount: paymentAmount * 100, // Convert to paise (₹5 = 500 paise)
       merchantUserId: user._id.toString(), // Using MongoDB ObjectId
-      redirectUrl: REDIRECT_URL, // ✅ Updated
+      redirectUrl: REDIRECT_URL, // ✅ Ensure this is correct
       redirectMode: 'POST',
       paymentInstrument: { type: 'PAY_PAGE' },
       mobileNumber: "9999999999" // Mandatory for sandbox
@@ -135,11 +131,11 @@ exports.paymentCallback = async (req, res) => {
       await user.save();
       console.log("✅ Subscription updated successfully!");
 
-      return res.redirect(SUCCESS_URL);
+      return res.redirect(process.env.SUCCESS_URL);
     }
 
     console.error("❌ Payment failed or not completed.");
-    res.redirect(FAILURE_URL);
+    res.redirect(process.env.FAILURE_URL);
 
   } catch (error) {
     console.error('Payment callback error:', error.response?.data || error.message);
