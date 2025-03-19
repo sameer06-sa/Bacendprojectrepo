@@ -6,6 +6,7 @@ const {
   getUserDetailsByEmail,
   autoLogin, // Add this
 } = require('../controllers/userController');
+const { getAllUsers } = require('../controllers/userController');
 const { signupValidator, signinValidator } = require('../validators/signupValidators');
 const { validateRequest } = require('../middlewares/validationMiddleware');
 const authenticateUser = require('../middlewares/authenticateUser');
@@ -54,6 +55,8 @@ router.post('/signin', signinValidator, validateRequest, async (req, res, next) 
   }
 });
 
+// Fetch all users (requires authentication)
+router.get('/all', getAllUsers);
 
 // Get user details by email
 router.get('/:email', authenticateUser, async (req, res, next) => {

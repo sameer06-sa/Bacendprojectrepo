@@ -5,6 +5,14 @@ const User = require('../models/userModel');
 // Valid subscription types
 const validSubscriptionTypes = ['Free trial', 'Organization'];
 
+// Allowed durations for Organization subscriptions
+const allowedDurations = {
+  "1 month": 1,
+  "3 months": 3,
+  "6 months": 6,
+  "1 year": 12
+};
+
 // Function to check if a user already has an active subscription
 const checkActiveSubscription = async (userId) => {
   const existingSubscription = await Subscription.findOne({ user: userId });
@@ -20,7 +28,7 @@ const checkActiveSubscription = async (userId) => {
 // Function to create a new subscription or request admin approval
 const createSubscription = async (req, res) => {
   try {
-    const { subscriptionType } = req.body;
+    const { subscriptionType, duration } = req.body;
     const userId = req.user._id;
 
     // Validate subscription type
@@ -37,14 +45,22 @@ const createSubscription = async (req, res) => {
       return res.status(400).json(activeSubscriptionError);
     }
 
-    // Fetch user details to ensure the user exists and get email
+    // Fetch user details to ensure the user exists
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
 
-    // If subscription type is "Organization", send request to admin instead of creating subscription
+    // If subscription type is "Organization", validate duration and send request to admin
     if (subscriptionType === 'Organization') {
+      if (!allowedDurations[duration]) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid duration. Allowed durations: ${Object.keys(allowedDurations).join(', ')}.`,
+        });
+      }
+
+      // Check if a request is already pending
       const existingRequest = await OrganizationRequest.findOne({ user: userId, status: 'pending' });
       if (existingRequest) {
         return res.status(400).json({ success: false, message: 'Your request is already pending for approval.' });
@@ -53,8 +69,9 @@ const createSubscription = async (req, res) => {
       // Create a new request for organization approval
       const newRequest = new OrganizationRequest({
         user: userId,
-        userEmail: user.email, // Ensure email is stored
+        userEmail: user.email,
         subscriptionType,
+        duration, // Store duration in request
         status: 'pending',
         requestedAt: new Date(),
       });
@@ -68,12 +85,15 @@ const createSubscription = async (req, res) => {
       });
     }
 
-    // Create a new subscription for non-organization types
+    // For "Free Trial", default to 1-year subscription
+    const endDate = new Date();
+    endDate.setFullYear(endDate.getFullYear() + 1);
+
     const newSubscription = new Subscription({
       user: userId,
       subscriptionType,
       startDate: new Date(),
-      endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // 1-year subscription
+      endDate,
     });
 
     await newSubscription.save();
@@ -92,6 +112,7 @@ const createSubscription = async (req, res) => {
   }
 };
 
+// Function to update organization request status (approved/rejected)
 const updateRequestStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -103,12 +124,33 @@ const updateRequestStatus = async (req, res) => {
     }
 
     const request = await OrganizationRequest.findById(id);
-    
     if (!request) {
       return res.status(404).json({ success: false, message: 'Request not found' });
     }
 
-    // Update status
+    // If admin approves, create the subscription
+    if (status === 'approved') {
+      const user = await User.findById(request.user);
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found.' });
+      }
+
+      const months = allowedDurations[request.duration];
+      const startDate = new Date();
+      const endDate = new Date(startDate);
+      endDate.setMonth(endDate.getMonth() + months);
+
+      const newSubscription = new Subscription({
+        user: user._id,
+        subscriptionType: request.subscriptionType,
+        startDate,
+        endDate,
+      });
+
+      await newSubscription.save();
+    }
+
+    // Update the request status
     request.status = status;
     await request.save();
 
@@ -119,4 +161,4 @@ const updateRequestStatus = async (req, res) => {
   }
 };
 
-module.exports = { createSubscription,updateRequestStatus };
+module.exports = { createSubscription, updateRequestStatus };

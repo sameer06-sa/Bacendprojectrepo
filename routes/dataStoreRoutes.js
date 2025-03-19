@@ -3,6 +3,7 @@ const router = express.Router();
 
 // Import the controller correctly
 const dataStoreController = require('../controllers/dataStoreController');
+const { logNotification } = require('../middlewares/notificationLogger'); // Import the notification logger
 
 // Import authentication middleware
 const authenticateUser = require('../middlewares/authenticateUser');

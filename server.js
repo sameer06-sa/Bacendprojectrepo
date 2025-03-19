@@ -44,6 +44,7 @@ const userRoutes = require('./routes/userRoutes');
 const webAppRoutes = require('./routes/webAppRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const organizationRoutes = require('./routes/organizationRoutes');
+const adminOrganizationRoutes = require('./routes/AdminOrganizationRoutes'); // ✅ Added Admin Organization Routes
 const projectRoutes = require('./routes/projectRoutes');
 const addUserRoutes = require('./routes/addUserRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
@@ -51,13 +52,12 @@ const hubIngestRoutes = require('./routes/hubingestroutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const dataStoreRoutes = require('./routes/dataStoreRoutes');
-const adminRoutes=require('./routes/adminRoutes');
-const authRoutes=require('./routes/authRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const authRoutes = require('./routes/authRoutes');
 const deploymentRoutes = require('./routes/deploymentRoutes'); // Deployment routes
 const taskRoutes = require('./routes/taskRoutes'); // Task routes
 const deploymentCircleRoutes = require('./routes/deploymentCircleRouter');
-const supportRoutes=require('./routes/supportRoutes')
-
+const supportRoutes = require('./routes/supportRoutes');
 
 // Initialize database and start server
 const initializeServer = async () => {
@@ -71,6 +71,7 @@ const initializeServer = async () => {
     app.use('/api/webapp', webAppRoutes);
     app.use('/api/payment', paymentRoutes);
     app.use('/api/org', organizationRoutes);
+    app.use('/api/admin-organization', adminOrganizationRoutes); // ✅ Added Admin Organization API
     app.use('/api/proj', projectRoutes);
     app.use('/api/add-user', addUserRoutes);
     app.use('/api', serviceRoutes);
@@ -78,12 +79,12 @@ const initializeServer = async () => {
     app.use('/api/subscriptions', subscriptionRoutes);
     app.use('/api/notifications', notificationRoutes);
     app.use('/api/datastore', dataStoreRoutes);
-    app.use('/api/admin',adminRoutes); // Admin routes
-    app.use('/api/auth',authRoutes);
+    app.use('/api/admin', adminRoutes); // Admin routes
+    app.use('/api/auth', authRoutes);
     app.use('/api/deployments', deploymentRoutes); // Deployment routes
     app.use('/api/tasks', taskRoutes); // Task routes
     app.use('/api/deploymentCircles', deploymentCircleRoutes);
-    app.use('/api/support',supportRoutes);
+    app.use('/api/support', supportRoutes);
     app.use('/api/payment', paymentRoutes);
 
     // Health check route

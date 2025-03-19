@@ -7,6 +7,7 @@ const hubIngestController = require('../controllers/hubingest controller'); // E
 // Import authentication middleware
 const authenticateUser = require('../middlewares/authenticateUser');
 
+
 // Define Routes
 router.post('/', authenticateUser, hubIngestController.createHubIngest);
 router.get('/', authenticateUser, hubIngestController.getAllHubIngest);

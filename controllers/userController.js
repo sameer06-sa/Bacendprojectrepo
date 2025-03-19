@@ -271,3 +271,25 @@ exports.getUsersBySubscriptionType = async (req, res, next) => {
   }
 };
 
+// Fetch All Users with Selected Fields
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({}, '_id fullName email mobile country state companyName designation'); // Select specific fields
+
+    if (!users.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'No users found.',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'All users retrieved successfully.',
+      data: users,
+    });
+  } catch (error) {
+    console.error('Error in getAllUsers:', error.message);
+    next(error);
+  }
+};
